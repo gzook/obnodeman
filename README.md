@@ -1,0 +1,2 @@
+# obnodeman
+OpenBazaar node manager
