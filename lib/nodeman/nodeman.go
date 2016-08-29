@@ -1,10 +1,8 @@
 package nodeman
 
 import (
-	"bufio"
 	"errors"
 	"fmt"
-	"io"
 	"log"
 	"os"
 	"os/exec"
@@ -15,8 +13,8 @@ import (
 )
 
 type Client struct {
-	mutex   *sync.Mutex
-	runCmd  *exec.Cmd
+	mutex  *sync.Mutex
+	runCmd *exec.Cmd
 }
 
 func New() *Client {
@@ -68,7 +66,7 @@ func (client *Client) Start() (err error) {
 		"0.0.0.0",
 	}
 
-	if err = client.runAndWriteToLog(exec.Command("python", args...)); err != nil {
+	if err = client.startCmd(exec.Command("python", args...)); err != nil {
 		err = fmt.Errorf("nodeman: failed to start. %s", err.Error())
 	}
 
@@ -92,7 +90,7 @@ func waitOnStop(cmd *exec.Cmd) {
 		}
 	case err := <-done:
 		if err != nil {
-			log.Println("nodeman: ob process exited with error = %v", err)
+			log.Printf("nodeman: ob process exited with error = %v", err)
 		} else {
 			log.Println("nodeman: ob process exited gracefully")
 		}
@@ -111,39 +109,11 @@ func checkWorkingDir() error {
 	return nil
 }
 
-func (client *Client) runAndWriteToLog(cmd *exec.Cmd) error {
+func (client *Client) startCmd(cmd *exec.Cmd) error {
 
-	/*    stdout, err := cmd.StdoutPipe()
-	      if err != nil {
-	          return err
-	      }
-	      stderr, err := cmd.StderrPipe()
-	      if err != nil {
-	          return err
-	      }*/
-
-	// start the command after having set up the pipe
 	if err := cmd.Start(); err != nil {
 		return err
 	}
 	client.runCmd = cmd
-
-	//    go asyncScan(stdout)
-	//    go asyncScan(stderr)
-
 	return nil
-}
-
-// TODO: delete below?
-func asyncScan(read io.ReadCloser) {
-
-	// read command's stdout line by line
-	in := bufio.NewScanner(read)
-
-	for in.Scan() {
-		log.Printf(in.Text()) // write each line to your log, or anything you need
-	}
-	if err := in.Err(); err != nil {
-		log.Printf("error: %s", err)
-	}
 }
