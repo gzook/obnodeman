@@ -2,12 +2,19 @@
 OpenBazaar Node Manager
 
 This is a small Go wrapper for the OpenBazaar v1 (python) app - it allows your OpenBazaar shop to be remotely restarted with a single http call if it becomes unresponsive. This project has only been tested on Ubuntu Linux. It:
+
 1. It is a single executable file,
+
 2. Launches OpenBazzar upon startup,
+
 3. Exposes a http API allowing:
+
 a. OpenBazaar python process to be stopped
+
 b. OpenBazaar python process to be started
+
 c. OpenBazaar python process to be re-started
+
 
 It should only be used by people with deep knowledge of the Go language, OpenBazaar and network security best practices. It is suitable for use within a private network such as a properly configured AWS VPC. The http API has no security applied - do not expose the API port to the internet without making changes to secure the API as doing so will allow malicious parties to shut down your OpenBazaar server at will. 
 
